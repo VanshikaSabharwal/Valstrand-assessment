@@ -52,7 +52,7 @@ Then edit `.env` with your configuration values.
 Start the development server with webpack:
 
 ```bash
-npm run dev --webpack
+npm run dev -- --webpack
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
