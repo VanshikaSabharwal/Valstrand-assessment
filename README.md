@@ -21,8 +21,6 @@ https://youtu.be/oQVZHp-Wgq8
 
 *Full walkthrough of the application*
 
-> **Note:** To add your demo video, upload it to your GitHub repository in the Issues or Pull Requests section, then copy the URL that GitHub generates and replace the placeholder above.
-
 ## Getting Started
 
 ### Prerequisites
