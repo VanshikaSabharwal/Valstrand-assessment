@@ -17,6 +17,7 @@ interface ResultsGalleryProps {
 export default function ResultsGallery({ results, onReset }: ResultsGalleryProps) {
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null)
   const [downloading, setDownloading] = useState(false)
+  const [sharingIdx, setSharingIdx] = useState<number | null>(null)
 
   const copyToClipboard = (text: string, idx: number) => {
     navigator.clipboard.writeText(text)
@@ -24,10 +25,32 @@ export default function ResultsGallery({ results, onReset }: ResultsGalleryProps
     setTimeout(() => setCopiedIdx(null), 2000)
   }
 
+  const handleShare = async (result: Result, idx: number) => {
+    setSharingIdx(idx)
+    try {
+      const shareData = {
+        title: "Property Description",
+        text: `${result.socialContent}\n\n${result.description}`,
+        url: window.location.href,
+      }
+
+      if (navigator.share) {
+        await navigator.share(shareData)
+      } else {
+        navigator.clipboard.writeText(`${shareData.text}\n${shareData.url}`)
+        alert("Sharing not supported. Link copied to clipboard instead.")
+      }
+    } catch (error) {
+      console.error("Share failed:", error)
+      alert("Failed to share. Please try again.")
+    } finally {
+      setSharingIdx(null)
+    }
+  }
+
   const downloadAll = async () => {
     setDownloading(true)
     try {
-      // Create a CSV with all results
       const csvContent = [
         ["Property #", "Description", "Social Media Content"],
         ...results.map((result, idx) => [idx + 1, result.description, result.socialContent]),
@@ -35,7 +58,6 @@ export default function ResultsGallery({ results, onReset }: ResultsGalleryProps
         .map((row) => row.map((cell) => `"${cell}"`).join(","))
         .join("\n")
 
-      // Create blob and download
       const blob = new Blob([csvContent], { type: "text/csv" })
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement("a")
@@ -91,14 +113,19 @@ export default function ResultsGallery({ results, onReset }: ResultsGalleryProps
               <div className="flex gap-2 pt-4">
                 <button
                   onClick={() => copyToClipboard(result.socialContent, idx)}
-                  className="flex-1 flex items-center justify-center gap-2 btn-secondary"
+                  className="flex-1 flex items-center cursor-pointer justify-center gap-2 btn-secondary"
                 >
                   <Copy className="w-4 h-4" />
                   {copiedIdx === idx ? "Copied!" : "Copy"}
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-2 btn-secondary">
+
+                <button
+                  onClick={() => handleShare(result, idx)}
+                  disabled={sharingIdx === idx}
+                  className="flex-1 flex items-center cursor-pointer justify-center gap-2 btn-secondary disabled:opacity-50"
+                >
                   <Share2 className="w-4 h-4" />
-                  Share
+                  {sharingIdx === idx ? "Sharing..." : "Share"}
                 </button>
               </div>
             </div>

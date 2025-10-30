@@ -118,7 +118,7 @@ export default function ImageUploader({ onImagesSelected, onProcess, isProcessin
           <button
             onClick={onProcess}
             disabled={isProcessing || images.length === 0}
-            className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed text-lg px-8 py-4"
+            className="btn-primary disabled:opacity-50  cursor-pointer disabled:cursor-not-allowed text-lg px-8 py-4"
           >
             {isProcessing ? "Processing..." : "Process Images"}
           </button>
